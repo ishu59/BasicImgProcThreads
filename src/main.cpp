@@ -3,13 +3,14 @@
 #include <string>
 #include <thread>
 #include <vector>
-using namespace std;
+//using namespace std;
 
+#include "MultipleImageWindow.h"
+#include "NNProcessor.h"
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include "utils/MultipleImageWindow.h"
-using namespace cv;
+// using namespace cv;
 
 void blurImg(const Mat &img, Mat &blurMat) {
   //  int a = 0;
@@ -21,23 +22,44 @@ void grayImg(const Mat &img, Mat &grayMat) {
 void sobelImg(const Mat &img, Mat &sobelMat) {
   Sobel(img, sobelMat, CV_8U, 1, 1);
 }
+void faceTrack(NNProcessor &net,Mat &frame) {
+//  std::cout << "Hello from nnp\n";
+//  std::string modelConfiguration = "data/deploy.prototxt.txt";
+//  std::string modelBinary = "data/res10_300x300_ssd_iter_140000.caffemodel";
 
-int main() {
+//  auto net = NNProcessor(modelConfiguration, modelBinary);
+//  int cameraDevice = 0;
+//  auto cap = VideoCapture(cameraDevice);
+
+  float threshold = 0.7;
+  net.processFrames(frame, threshold);
+}
+void compute() {
   VideoCapture cap;
   cap.open(0);
-  namedWindow("Video", 1);
+//  namedWindow("Video", 1);
   std::unique_ptr<MultipleImageWindow> miw;
-  while (true) {
+  std::cout << "Hello from nnp\n";
+  std::string modelConfiguration = "data/deploy.prototxt.txt";
+  std::string modelBinary = "data/res10_300x300_ssd_iter_140000.caffemodel";
 
+  auto net = NNProcessor(modelConfiguration, modelBinary);
+  this_thread::sleep_for(chrono::milliseconds(1000));
+  int i = 0;
+  while (true) {
+    ++i;
     Mat frame;
     cap >> frame;
+    if (i%2==0)
+      continue;
     miw = make_unique<MultipleImageWindow>("MainWindow", 2, 2, WINDOW_AUTOSIZE);
     vector<thread> tVec;
     Mat blurMat, grayMat, sobelMat;
     tVec.emplace_back(thread(blurImg, std::ref(frame), std::ref(blurMat)));
     tVec.emplace_back(thread(grayImg, std::ref(frame), std::ref(grayMat)));
     tVec.emplace_back(thread(sobelImg, std::ref(frame), std::ref(sobelMat)));
-    for(auto& v:tVec){
+    tVec.emplace_back(thread(faceTrack, std::ref(net),std::ref(frame)));
+    for (auto &v : tVec) {
       v.join();
     }
     miw->addImage("Main", frame);
@@ -45,11 +67,14 @@ int main() {
     miw->addImage("Blur", blurMat);
     miw->addImage("Sobel", sobelMat);
     miw->render();
-//    imshow("Video", frame);
+    //    imshow("Video", frame);
     if (waitKey(30) >= 0) {
       break;
     }
   }
   cap.release();
+}
+int main() {
+  compute();
   return 0;
 }
