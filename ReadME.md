@@ -5,8 +5,8 @@ Generates 2x2 window of processed web cam feed with various filters and face det
 ## Overview
 
 This is Basic Image processing and face detection project with C++ and OpenCV. This application uses web camera 
-to detect faces and apply various filters in the filter window at runtime. The output has concurrent windows for output 
-driven by 4 concurrent threads producing the 4 processed live stream. Every alternate frame is processed enabling it to 
+to detect faces and apply various filters runtime. The output has 4 windows for video streams 
+driven by 4 concurrent threads producing the processed live stream. Every alternate frame is processed enabling it to 
 work on raspberry pi as well.
 
 ---------
