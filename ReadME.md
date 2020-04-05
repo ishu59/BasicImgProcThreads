@@ -1,4 +1,4 @@
-# Simple Multithreaded WebCam Processor
+# Simple Multithreaded WebCam face detector
 
 Generates 2x2 window of processed web cam feed with various filters and face detector. Needs a working web cam
 
