@@ -1,41 +1,41 @@
-#include "MultipleImageWindow.h"
+#include "MultWindow.h"
 
-MultipleImageWindow::MultipleImageWindow(string window_title, int cols,
+MultWindow::MultWindow(string window_title, int cols,
                                          int rows, int flags)
     : window_title(window_title), cols(cols),
       rows(rows) /*, canvas_width(1200), canvas_height(700)*/
 {
   namedWindow(window_title, flags);
-  this->canvas = Mat(this->canvas_height, this->canvas_width, CV_8UC3);
-  imshow(this->window_title, this->canvas);
+  canvas = Mat(canvas_height, canvas_width, CV_8UC3);
+  imshow(window_title, canvas);
 }
 
-int MultipleImageWindow::addImage(string title, Mat image, bool render) {
-  this->titles.push_back(title);
-  this->images.push_back(image);
+int MultWindow::addImage(string title, Mat image, bool render) {
+  titles.push_back(title);
+  images.push_back(image);
   if (render)
     this->render();
-  return this->images.size() - 1;
+  return images.size() - 1;
 }
 
-void MultipleImageWindow::removeImage(int pos) {
-  this->titles.erase(this->titles.begin() + pos);
-  this->images.erase(this->images.begin() + pos);
+void MultWindow::removeImage(int pos) {
+  titles.erase(titles.begin() + pos);
+  images.erase(images.begin() + pos);
 }
 
-void MultipleImageWindow::render() {
+void MultWindow::render() {
   // Clean our canvas
-  this->canvas.setTo(Scalar(20, 20, 20));
+  canvas.setTo(Scalar(20, 20, 20));
   // width and height of cell. add 10 px of padding between images
   int cell_width = (canvas_width / cols);
   int cell_height = (canvas_height / rows);
   int margin = 10;
   int max_images =
-      (this->images.size() > cols * rows) ? cols * rows : this->images.size();
+      (images.size() > cols * rows) ? cols * rows : images.size();
   int i = 0;
-  vector<string>::iterator titles_it = this->titles.begin();
-  for (vector<Mat>::iterator it = this->images.begin();
-       it != this->images.end(); ++it) {
+  vector<string>::iterator titles_it = titles.begin();
+  for (vector<Mat>::iterator it = images.begin();
+       it != images.end(); ++it) {
     string title = *titles_it;
     int cell_x = (cell_width) * ((i) % cols);
     int cell_y = (cell_height)*floor((i) / (float)cols);
@@ -43,9 +43,7 @@ void MultipleImageWindow::render() {
     // Draw a rectangle for each cell mat
     rectangle(canvas, Rect(cell_x, cell_y, cell_width, cell_height),
               Scalar(200, 200, 200), 1);
-    // For each cell draw an image if exists
-    Mat cell(this->canvas, mask);
-    // resize image to cell size
+    Mat cell(canvas, mask);
     Mat resized;
     double cell_aspect = (double)cell_width / (double)cell_height;
     Mat img = *it;
@@ -58,8 +56,7 @@ void MultipleImageWindow::render() {
       cvtColor(resized, resized, COLOR_GRAY2BGR);
     }
 
-    // Assign the image
-    Mat sub_cell(this->canvas,
+    Mat sub_cell(canvas,
                  Rect(cell_x, cell_y, resized.cols, resized.rows));
     resized.copyTo(sub_cell);
     putText(cell, title.c_str(), Point(20, 20), FONT_HERSHEY_SIMPLEX, 0.5,
@@ -70,6 +67,5 @@ void MultipleImageWindow::render() {
       break;
   }
 
-  // show image
-  imshow(this->window_title, this->canvas);
+  imshow(window_title, canvas);
 }

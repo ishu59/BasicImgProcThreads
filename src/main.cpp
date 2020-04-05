@@ -5,7 +5,7 @@
 #include <vector>
 //using namespace std;
 
-#include "MultipleImageWindow.h"
+#include "MultWindow.h"
 #include "NNProcessor.h"
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
@@ -37,9 +37,11 @@ void faceTrack(NNProcessor &net,Mat &frame) {
 void compute() {
   VideoCapture cap;
   cap.open(0);
-//  namedWindow("Video", 1);
-  std::unique_ptr<MultipleImageWindow> miw;
-  std::cout << "Hello from nnp\n";
+  if(!cap.isOpened()) {
+    std::cerr << "Unable to open webcam, Please configure webcam as device 0.\n";
+    exit(-1);
+  }
+  std::unique_ptr<MultWindow> miw;
   std::string modelConfiguration = "data/deploy.prototxt.txt";
   std::string modelBinary = "data/res10_300x300_ssd_iter_140000.caffemodel";
 
@@ -52,17 +54,18 @@ void compute() {
     cap >> frame;
     if (i%2==0)
       continue;
-    miw = make_unique<MultipleImageWindow>("MainWindow", 2, 2, WINDOW_AUTOSIZE);
+    miw = make_unique<MultWindow>("MainWindow", 2, 2, WINDOW_AUTOSIZE);
     vector<thread> tVec;
-    Mat blurMat, grayMat, sobelMat;
+    Mat blurMat, grayMat, sobelMat, nnMat;
+    frame.copyTo(nnMat);
     tVec.emplace_back(thread(blurImg, std::ref(frame), std::ref(blurMat)));
     tVec.emplace_back(thread(grayImg, std::ref(frame), std::ref(grayMat)));
     tVec.emplace_back(thread(sobelImg, std::ref(frame), std::ref(sobelMat)));
-    tVec.emplace_back(thread(faceTrack, std::ref(net),std::ref(frame)));
+    tVec.emplace_back(thread(faceTrack, std::ref(net),std::ref(nnMat)));
     for (auto &v : tVec) {
       v.join();
     }
-    miw->addImage("Main", frame);
+    miw->addImage("Main", nnMat);
     miw->addImage("Gray", grayMat);
     miw->addImage("Blur", blurMat);
     miw->addImage("Sobel", sobelMat);

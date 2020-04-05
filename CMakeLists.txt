@@ -9,7 +9,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
 add_definitions(${OpenCV_DEFINITIONS})
 
-add_executable(ImageProc src/main.cpp src/MultipleImageWindow.cpp src/NNProcessor.cpp)
+add_executable(ImageProc src/main.cpp src/MultWindow.cpp src/NNProcessor.cpp)
 target_link_libraries(ImageProc ${OpenCV_LIBRARIES})
 
 #add_executable(nnp src/nndriver.cpp src/NNProcessor.cpp)
