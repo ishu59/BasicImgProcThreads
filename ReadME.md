@@ -1,12 +1,16 @@
 # Simple Multithreaded WebCam Processor
+
 Generates 2x2 window of processed web cam feed with various filters and face detector. Needs a working web cam
 
 ## Overview
+
 This is Basic Image processing and face detection project with C++ and OpenCV. This application uses web camera 
 to detect faces and apply various filters in the filter window at runtime. The output has concurrent windows for output 
 driven by 4 concurrent threads producing the 4 processed live stream. Every alternate frame is processed enabling it to 
 work on raspberry pi as well.
+
 ---------
+
 Project Architecture:
 1. class:  MultWindow .h/.cpp => Class build to generate multiple window output, displaying several frame. Based on OpenCV 
 display libs
@@ -42,12 +46,7 @@ make
 ```
 
 ## Rubrics
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-</style>
+
 <table class="tg">
   <tr>
     <th class="tg-0pky">A README with instructions is included with the project</th>
