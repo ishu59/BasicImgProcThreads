@@ -21,7 +21,7 @@ on every frame of the video stream.
 It also starts the projects, create the video stream from web cam and processes each frame concurrently with 4 different 
 image processors. 
 
-<BR></BR><img src = "./detector.png"/><BR></BR><BR></BR>
+<BR></BR><img src = "./result.png"/><BR></BR><BR></BR>
 ## Dependencies
 - CMake (>= 3.12): For project building
 - OpenCV (>= 4.1): Project dependency
